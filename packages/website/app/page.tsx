@@ -7,7 +7,7 @@ const DMG_ARM64_URL = `${GH_RELEASES}/download/DockerBuddy-${VERSION}-arm64.dmg`
 const DMG_X64_URL = `${GH_RELEASES}/download/DockerBuddy-${VERSION}-x64.dmg`;
 const EXE_URL = `${GH_RELEASES}/download/DockerBuddy-Windows-x64.exe`;
 const EXE_ARM_URL = `${GH_RELEASES}/download/DockerBuddy-Windows-arm64.exe`;
-const APPIMAGE_URL = `${GH_RELEASES}/download/DockerBuddy-${VERSION}-x64.AppImage`;
+const APPIMAGE_URL = `${GH_RELEASES}/download/DockerBuddy-${VERSION}-x86_64.AppImage`;
 
 export default function Page() {
   return (
