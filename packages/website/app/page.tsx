@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 const GH_RELEASES = "https://github.com/DrPiggins/dockerbuddy/releases/latest";
-const VERSION = "1.0.0";
+const VERSION = "1.0.1";
 const DMG_ARM64_URL = `${GH_RELEASES}/download/DockerBuddy-${VERSION}-arm64.dmg`;
 const DMG_X64_URL = `${GH_RELEASES}/download/DockerBuddy-${VERSION}-x64.dmg`;
 const EXE_URL = `${GH_RELEASES}/download/DockerBuddy-Windows-x64.exe`;
@@ -69,8 +69,8 @@ function Hero() {
           Claude Code, meet Docker.
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-muted sm:text-xl">
-          DockerBuddy plugs Docker into Claude Code, then lets you offload heavy
-          builds to any other machine on your network. One app, two roles.
+          DockerBuddy plugs Docker into Claude Code. Optionally pair a second
+          machine and Claude can drive Docker on either one.
         </p>
 
         <div
@@ -159,7 +159,7 @@ function DashboardMock() {
           />
           <MockTile
             title="Paired"
-            host="Media-PC"
+            host="HomeLab"
             metrics={[
               { label: "CPU", value: "47%" },
               { label: "Memory", value: "11.4 / 32 GB" },
@@ -174,9 +174,9 @@ function DashboardMock() {
             <span className="text-xs text-muted-soft">live</span>
           </div>
           <div className="space-y-2 font-mono text-xs">
-            <LogRow time="14:22:11" tool="exec" target="Media-PC · dev-runner" ok />
+            <LogRow time="14:22:11" tool="exec" target="HomeLab · dev-runner" ok />
             <LogRow time="14:22:08" tool="ps" target="local" ok />
-            <LogRow time="14:21:54" tool="run_cached" target="Media-PC · dev-runner" ok />
+            <LogRow time="14:21:54" tool="run_cached" target="HomeLab · dev-runner" ok />
             <LogRow time="14:21:39" tool="logs" target="local · postgres" ok />
           </div>
         </div>
@@ -256,8 +256,8 @@ function Features() {
     },
     {
       icon: <CloudGlyph />,
-      title: "Offload heavy work to any machine",
-      body: "Pair your homelab box, a basement PC, or a beefy desktop. DockerBuddy routes builds, dev servers, and tests there over SSH so your laptop stays cool.",
+      title: "Pair a second machine (optional)",
+      body: "Got a homelab box or a beefy desktop? Pair it and DockerBuddy wires up a docker context over SSH — so you can have Claude run containers on it, not just your laptop.",
     },
     {
       icon: <FlowGlyph />,
@@ -296,10 +296,12 @@ function HowItWorks() {
           One binary. Two roles. Zero config drift.
         </h2>
         <p className="mt-4 text-muted">
-          DockerBuddy ships as a single app. On your Mac it runs as the
-          controller — the side Claude Code talks to. On a paired machine the
-          same binary flips into a control surface that mirrors the same
-          dashboard and accepts work from the controller.
+          DockerBuddy ships as a single app. On the machine running Claude Code
+          it's the controller. Drop a <code className="font-mono text-muted">paired.json</code>
+          on any other machine — Mac, Windows, or Linux — and the same binary
+          flips into a paired host that mirrors the dashboard and accepts work
+          from the controller. Controller and paired host can be any combination
+          of platforms.
         </p>
       </div>
 
@@ -307,7 +309,7 @@ function HowItWorks() {
         <RoleCard
           tag="Controller"
           tagColor="text-primary"
-          title="Your daily-driver Mac"
+          title="Wherever Claude Code lives"
           rows={[
             "Hosts the dock MCP server Claude Code calls",
             "Runs the setup wizard, manages contexts",
@@ -315,13 +317,13 @@ function HowItWorks() {
           ]}
         />
         <RoleCard
-          tag="Paired host"
+          tag="Paired host (optional)"
           tagColor="text-accent"
           title="Any other machine on your network"
           rows={[
-            "Runs heavy builds, dev servers, and tests",
+            "Reachable as a Docker context Claude can target",
             "Mirrors the controller dashboard over LAN",
-            "Reachable as a Docker context from Claude",
+            "Bring your own containers — DockerBuddy is the pipe",
           ]}
         />
       </div>
@@ -366,11 +368,11 @@ function Personas() {
   const items = [
     {
       title: "The dev with a basement PC",
-      body: "You bought a beefy desktop for builds. Pair it once and forget — Claude will route compile-heavy work there automatically.",
+      body: "You've got a beefy desktop sitting idle. Pair it once and you can ask Claude to run the build over there instead of cooking your laptop.",
     },
     {
       title: "The fan-noise refugee",
-      body: "Your laptop's been on max RPM since Tuesday. Offload the dev server and your machine goes quiet, instantly.",
+      body: "Your laptop's been on max RPM since Tuesday. Move the dev server to a paired box and your machine goes quiet.",
     },
     {
       title: "The Compose orchestrator",
@@ -422,7 +424,7 @@ function Faq() {
     },
     {
       q: "How does the pairing actually work?",
-      a: "Your Mac generates an SSH keypair and a setup script. Run the script on the other machine. From then on, DockerBuddy uses docker context over SSH; everything else flows over a token-authenticated HTTP channel on your LAN.",
+      a: "The controller generates an SSH keypair and a setup script. Run the script on the other machine. From then on, DockerBuddy uses docker context over SSH; everything else flows over a token-authenticated HTTP channel on your LAN.",
     },
     {
       q: "What about updates?",

@@ -433,6 +433,34 @@ function RolePick({
   const deviceLabel =
     platform === "darwin" ? "Mac" : platform === "win32" ? "PC" : "machine";
 
+  // Controller role drives Docker through Claude Code's MCP system. Without
+  // the Claude Code CLI installed, there's nothing for dock to register with,
+  // so block the role at the pick stage instead of letting the user run into
+  // it in LocalCheck.
+  const [claudeState, setClaudeState] = useState<"checking" | "ok" | "missing">(
+    "checking",
+  );
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const r = await window.api.checkPrereqs();
+      if (cancelled) return;
+      const cc = r.find((x) => x.key === "claudeCode");
+      setClaudeState(cc?.state === "ok" ? "ok" : "missing");
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  const controllerBlocked = claudeState === "missing";
+
+  async function recheckClaude() {
+    setClaudeState("checking");
+    const r = await window.api.checkPrereqs();
+    const cc = r.find((x) => x.key === "claudeCode");
+    setClaudeState(cc?.state === "ok" ? "ok" : "missing");
+  }
+
   return (
     <div className="flex flex-col items-center gap-6">
       <div className="flex flex-col items-center">
@@ -459,19 +487,48 @@ function RolePick({
         </div>
       )}
 
+      {controllerBlocked && (
+        <div className="w-full rounded-2xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
+          <div className="font-medium">
+            Claude Code isn't installed on this {deviceLabel}.
+          </div>
+          <div className="text-amber-100/80 text-xs mt-1">
+            Controller mode needs Claude Code so DockerBuddy can register the
+            dock MCP server. You can still set this {deviceLabel} up as a
+            server — a controller elsewhere will drive Docker on it over SSH.
+          </div>
+          <div className="flex gap-2 mt-3">
+            <Button
+              variant="secondary"
+              onClick={() => window.api.openExternal("https://claude.ai/code")}
+            >
+              Install Claude Code
+            </Button>
+            <Button variant="ghost" onClick={recheckClaude}>
+              Re-check
+            </Button>
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-2 gap-4 w-full">
         <RoleCard
           title="Controller"
           tagline="Drive Docker from here"
-          description="Use Claude Code on this device to run Docker locally and optionally manage remote hosts."
-          suggested={suggested === "controller"}
+          description={
+            controllerBlocked
+              ? "Requires Claude Code. Install it above, then re-check to enable this role."
+              : "Use Claude Code on this device to run Docker locally and optionally manage remote hosts."
+          }
+          suggested={!controllerBlocked && suggested === "controller"}
+          disabled={controllerBlocked}
           onClick={() => onPick("controller")}
         />
         <RoleCard
           title="Server"
           tagline="Be a Docker host"
           description="Let a controller (another DockerBuddy install) drive Docker on this machine over SSH."
-          suggested={suggested === "server"}
+          suggested={suggested === "server" || controllerBlocked}
           onClick={() => onPick("server")}
         />
       </div>
@@ -484,30 +541,39 @@ function RoleCard({
   tagline,
   description,
   suggested,
+  disabled,
   onClick,
 }: {
   title: string;
   tagline: string;
   description: string;
   suggested: boolean;
+  disabled?: boolean;
   onClick: () => void;
 }) {
   return (
     <button
       onClick={onClick}
+      disabled={disabled}
       className={`text-left rounded-3xl border p-6 transition-colors ${
-        suggested
-          ? "border-whale-500/60 bg-whale-500/10 hover:bg-whale-500/15"
-          : "border-navy-700/60 bg-navy-800/40 hover:bg-navy-800/70"
+        disabled
+          ? "border-navy-700/40 bg-navy-800/20 opacity-50 cursor-not-allowed"
+          : suggested
+            ? "border-whale-500/60 bg-whale-500/10 hover:bg-whale-500/15"
+            : "border-navy-700/60 bg-navy-800/40 hover:bg-navy-800/70"
       }`}
     >
       <div className="flex items-center justify-between">
         <div className="text-lg font-semibold text-white">{title}</div>
-        {suggested && (
+        {disabled ? (
+          <span className="text-[10px] uppercase tracking-wider text-amber-200 bg-amber-500/20 border border-amber-500/40 rounded-full px-2 py-0.5">
+            Unavailable
+          </span>
+        ) : suggested ? (
           <span className="text-[10px] uppercase tracking-wider text-whale-300 bg-whale-500/20 border border-whale-500/40 rounded-full px-2 py-0.5">
             Suggested
           </span>
-        )}
+        ) : null}
       </div>
       <div className="text-whale-200/70 text-sm mt-1">{tagline}</div>
       <div className="text-whale-200/60 text-xs mt-3 leading-relaxed">
@@ -839,6 +905,8 @@ function RemoteSetup({
         }
       />
 
+      <TailscaleTip />
+
       <div className="grid grid-cols-2 gap-3 mb-3">
         <label className="block">
           <span className="text-sm text-whale-200/80">Context name</span>
@@ -1003,12 +1071,14 @@ function RemoteTest({
         subtitle="Tell us how to reach the remote host. We'll verify SSH + Docker, then add it as a Docker context."
       />
 
+      <TailscaleTip />
+
       <div className="grid grid-cols-3 gap-3 mb-5">
         <TextField
           label="Host / IP"
           value={cfg.ip}
           onChange={(v) => setCfg({ ...cfg, ip: v })}
-          placeholder="192.168.1.10"
+          placeholder="192.168.1.10 or homelab.tailnet.ts.net"
         />
         <TextField
           label="Username"
@@ -1095,6 +1165,65 @@ function TextField({
         className="mt-1 w-full bg-navy-800 border border-navy-700 rounded-xl px-3 py-2 text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-whale-500"
       />
     </label>
+  );
+}
+
+function TailscaleTip() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="rounded-2xl border border-navy-700/50 bg-navy-800/40 px-4 py-3 mb-4 text-sm">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex w-full items-center justify-between text-left"
+      >
+        <span className="text-whale-200/90">
+          <span className="font-medium text-white">Optional:</span> use Tailscale
+          to pair across networks
+        </span>
+        <span className="text-whale-200/60 text-xs">
+          {open ? "Hide" : "Show"}
+        </span>
+      </button>
+      {open && (
+        <div className="text-whale-200/70 text-xs mt-3 space-y-2 leading-relaxed">
+          <p>
+            If the two machines aren't on the same LAN — or you want to reach
+            your homelab from a coffee shop — install Tailscale on both sides
+            and use the tailnet address instead of the LAN IP.
+          </p>
+          <ol className="list-decimal list-inside space-y-1 ml-1">
+            <li>
+              Install Tailscale on both this machine and the remote host, sign
+              in to the same tailnet.
+            </li>
+            <li>
+              On the remote host, run{" "}
+              <span className="font-mono text-white">tailscale ip -4</span> or
+              note its MagicDNS name (e.g.{" "}
+              <span className="font-mono text-white">
+                homelab.tailnet.ts.net
+              </span>
+              ).
+            </li>
+            <li>
+              Use that address as the host when you set up the connection.
+              Tailscale routes the SSH + telemetry traffic over its mesh; no
+              port forwarding required.
+            </li>
+          </ol>
+          <p className="pt-1">
+            <button
+              onClick={() =>
+                window.api.openExternal("https://tailscale.com/download")
+              }
+              className="text-whale-300 underline hover:text-whale-200"
+            >
+              tailscale.com/download
+            </button>
+          </p>
+        </div>
+      )}
+    </div>
   );
 }
 
