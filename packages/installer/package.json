@@ -16,11 +16,14 @@
     "dist:win:release": "vite build && electron-builder --win --publish always && npm run postdist:win",
     "dist:linux": "vite build && electron-builder --linux --publish never",
     "dist:linux:release": "vite build && electron-builder --linux --publish always",
-    "postdist:win": "mkdir -p resources/win && cp dist/DockerBuddy-Windows-x64.exe dist/DockerBuddy-Windows-arm64.exe resources/win/ 2>/dev/null || true"
+    "postdist:win": "mkdir -p resources/win && cp release/DockerBuddy-Windows-x64.exe release/DockerBuddy-Windows-arm64.exe resources/win/ 2>/dev/null || true"
   },
   "build": {
     "appId": "com.parkerlabonte.dockerbuddy",
     "productName": "DockerBuddy",
+    "directories": {
+      "output": "release"
+    },
     "files": [
       "dist/**/*",
       "dist-electron/**/*"
