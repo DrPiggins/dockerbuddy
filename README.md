@@ -14,7 +14,7 @@ One app, two roles. Same binary runs as controller (on your daily-driver) or pai
 
 ## Install
 
-Grab the right build for your OS from **[dockerbuddy.com](https://dockerbuddy.com)** or the [Releases page](https://github.com/parkerlabonte/dockerbuddy/releases).
+Grab the right build for your OS from **[dockerbuddy.com](https://dockerbuddy.com)** or the [Releases page](https://github.com/DrPiggins/dockerbuddy/releases).
 
 Requires:
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) (or Docker Engine on Linux)
