@@ -1,0 +1,119 @@
+{
+  "name": "dockerbuddy",
+  "version": "1.0.0",
+  "description": "One-click Docker + Claude Code setup, with optional remote host onboarding",
+  "main": "dist-electron/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "preview": "vite preview",
+    "dist": "vite build && electron-builder",
+    "dist:mac": "vite build && electron-builder --mac --publish never",
+    "dist:mac:release": "vite build && electron-builder --mac --publish always",
+    "dist:win": "vite build && electron-builder --win && npm run postdist:win",
+    "dist:win:release": "vite build && electron-builder --win --publish always && npm run postdist:win",
+    "dist:linux": "vite build && electron-builder --linux --publish never",
+    "dist:linux:release": "vite build && electron-builder --linux --publish always",
+    "postdist:win": "mkdir -p resources/win && cp dist/DockerBuddy-Windows-x64.exe dist/DockerBuddy-Windows-arm64.exe resources/win/ 2>/dev/null || true"
+  },
+  "build": {
+    "appId": "com.parkerlabonte.dockerbuddy",
+    "productName": "DockerBuddy",
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "scripts",
+        "to": "scripts"
+      },
+      {
+        "from": "../dock",
+        "to": "dock"
+      },
+      {
+        "from": "resources/claude-context.md",
+        "to": "claude-context.md"
+      }
+    ],
+    "mac": {
+      "target": [
+        { "target": "dmg", "arch": ["arm64", "x64"] }
+      ],
+      "category": "public.app-category.developer-tools",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "notarize": false,
+      "extraResources": [
+        {
+          "from": "resources/win",
+          "to": "win",
+          "filter": ["*.exe"]
+        }
+      ]
+    },
+    "dmg": {
+      "artifactName": "DockerBuddy-${version}-${arch}.${ext}"
+    },
+    "afterSign": "scripts/notarize.cjs",
+    "win": {
+      "target": [
+        { "target": "nsis", "arch": ["x64", "arm64"] }
+      ],
+      "artifactName": "DockerBuddy-Windows-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "deleteAppDataOnUninstall": false,
+      "include": "build/installer.nsh"
+    },
+    "linux": {
+      "target": ["AppImage"],
+      "category": "Development",
+      "artifactName": "DockerBuddy-${version}-${arch}.${ext}"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "parkerlabonte",
+      "repo": "dockerbuddy",
+      "releaseType": "release"
+    }
+  },
+  "keywords": [],
+  "author": "Parker Labonte",
+  "license": "MIT",
+  "type": "module",
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.0",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.2",
+    "autoprefixer": "^10.5.0",
+    "concurrently": "^10.0.3",
+    "cross-env": "^10.1.0",
+    "electron": "^42.3.3",
+    "electron-builder": "^26.15.0",
+    "postcss": "^8.5.15",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwindcss": "^4.3.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.16",
+    "vite-plugin-electron": "^1.0.4",
+    "vite-plugin-electron-renderer": "^1.0.0"
+  },
+  "dependencies": {
+    "electron-updater": "^6.3.9",
+    "systeminformation": "^5.31.7"
+  },
+  "optionalDependencies": {
+    "@electron/notarize": "^2.5.0"
+  }
+}

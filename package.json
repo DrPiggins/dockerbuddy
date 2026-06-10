@@ -1,0 +1,19 @@
+{
+  "name": "dockerbuddy-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "DockerBuddy installer + dock MCP server + dockerbuddy.com website, one repo",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm --workspace packages/installer run dev",
+    "build": "npm --workspace packages/installer run build",
+    "typecheck": "npm --workspace packages/installer run typecheck",
+    "dist": "npm --workspace packages/installer run dist",
+    "dist:mac": "npm --workspace packages/installer run dist:mac",
+    "dist:win": "npm --workspace packages/installer run dist:win",
+    "web": "npm --workspace packages/website run dev",
+    "web:build": "npm --workspace packages/website run build"
+  }
+}

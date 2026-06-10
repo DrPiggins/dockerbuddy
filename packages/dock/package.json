@@ -1,0 +1,13 @@
+{
+  "name": "dock",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "dock": "./bin/dock.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^4.4.3"
+  }
+}

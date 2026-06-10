@@ -1,0 +1,29 @@
+node_modules/
+.DS_Store
+.env
+.env.*
+!.env.example
+
+# build outputs
+dist/
+dist-electron/
+release/
+.vite/
+.next/
+out/
+
+# logs
+*.log
+npm-debug.log*
+
+# editor / IDE
+.idea/
+.vscode/
+*.swp
+
+# claude-code session local state
+.claude/
+.serena/
+
+# OS
+Thumbs.db

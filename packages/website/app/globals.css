@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #0a1220;
+  --bg-soft: #0f1a2c;
+  --surface: #14223a;
+  --surface-hover: #1a2a44;
+  --border: #1f2f4a;
+  --border-soft: #182338;
+  --foreground: #e8eef7;
+  --muted: #8aa1bf;
+  --muted-soft: #5c708a;
+  --primary: #6fb4e5;
+  --primary-hover: #8cc4ef;
+  --accent: #a8d8f0;
+  --glow: rgba(111, 180, 229, 0.18);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-soft: var(--bg-soft);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-border: var(--border);
+  --color-border-soft: var(--border-soft);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-soft: var(--muted-soft);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-accent: var(--accent);
+
+  --font-sans: var(--font-inter);
+  --font-mono: ui-monospace, "SF Mono", Menlo, Monaco, "Cascadia Mono", monospace;
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--foreground);
+}
+
+body {
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 0%, var(--glow), transparent 70%),
+    var(--bg);
+}
+
+::selection {
+  background: var(--primary);
+  color: var(--bg);
+}
+
+a {
+  color: inherit;
+}
