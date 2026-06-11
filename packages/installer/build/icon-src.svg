@@ -1,0 +1,53 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#131c36"/>
+      <stop offset="1" stop-color="#070d1c"/>
+    </linearGradient>
+    <radialGradient id="aura" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#0db7ed" stop-opacity="0.55"/>
+      <stop offset="0.6" stop-color="#8b5cf6" stop-opacity="0.18"/>
+      <stop offset="0.8" stop-color="#8b5cf6" stop-opacity="0"/>
+      <stop offset="1" stop-color="#8b5cf6" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4fc6ff"/>
+      <stop offset="0.6" stop-color="#0db7ed"/>
+      <stop offset="1" stop-color="#0789c2"/>
+    </linearGradient>
+  </defs>
+
+  <!-- macOS squircle with standard margin -->
+  <rect x="100" y="100" width="824" height="824" rx="186" fill="url(#bg)"/>
+
+  <!-- violet/cyan aura glow -->
+  <circle cx="512" cy="512" r="360" fill="url(#aura)"/>
+
+  <!-- Buddy, from Mascot.tsx (viewBox 0 0 100 100), scaled up -->
+  <g transform="translate(153,139) scale(6.9)">
+    <!-- Body -->
+    <ellipse cx="50" cy="62" rx="34" ry="26" fill="url(#bodyGrad)"/>
+
+    <!-- Side fin -->
+    <path d="M 18 60 Q 8 64 12 78 Q 22 74 26 68 Z" fill="#0789c2"/>
+
+    <!-- Tail -->
+    <path d="M 82 56 Q 96 48 96 36 Q 92 50 84 52 Q 96 60 96 70 Q 90 60 82 62 Z" fill="#0789c2"/>
+
+    <!-- Top container cubes -->
+    <rect x="38" y="32" width="10" height="10" rx="2" fill="#162241" stroke="#4fc6ff" stroke-width="1.2"/>
+    <rect x="52" y="32" width="10" height="10" rx="2" fill="#162241" stroke="#4fc6ff" stroke-width="1.2"/>
+    <rect x="45" y="20" width="10" height="10" rx="2" fill="#162241" stroke="#a78bfa" stroke-width="1.2"/>
+
+    <!-- Eyes -->
+    <circle cx="44" cy="58" r="3.5" fill="white"/>
+    <circle cx="44.5" cy="58.5" r="2" fill="#070d1c"/>
+    <circle cx="45.2" cy="57.6" r="0.7" fill="white"/>
+    <circle cx="58" cy="58" r="3.5" fill="white"/>
+    <circle cx="58.5" cy="58.5" r="2" fill="#070d1c"/>
+    <circle cx="59.2" cy="57.6" r="0.7" fill="white"/>
+
+    <!-- Smile -->
+    <path d="M 46 72 Q 51 76 56 72" stroke="#070d1c" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+  </g>
+</svg>
