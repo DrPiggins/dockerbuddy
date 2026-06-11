@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 const GH_RELEASES = "https://github.com/DrPiggins/dockerbuddy/releases/latest";
-const VERSION = "1.0.2";
+const VERSION = "1.0.3";
 const DMG_ARM64_URL = `${GH_RELEASES}/download/DockerBuddy-${VERSION}-arm64.dmg`;
 const DMG_X64_URL = `${GH_RELEASES}/download/DockerBuddy-${VERSION}-x64.dmg`;
 const EXE_URL = `${GH_RELEASES}/download/DockerBuddy-Windows-x64.exe`;
