@@ -11,7 +11,6 @@ import { HostMetricTile } from "../dashboard/HostMetricTile";
 import { ContainerList } from "../dashboard/ContainerList";
 import { CommandLog } from "../dashboard/CommandLog";
 import { FrequencyGraph } from "../dashboard/FrequencyGraph";
-import { LatencyStrip } from "../dashboard/LatencyStrip";
 import { Card } from "../components/Card";
 
 const MAX_EVENTS = 500;
@@ -93,7 +92,6 @@ export function Dashboard({ platform }: { platform: NodeJS.Platform }) {
             <ContainerList stats={stats} />
           </div>
           <div className="col-span-8 min-h-0 flex flex-col gap-3">
-            <LatencyStrip events={events} />
             <div className="flex-1 min-h-0">
               <CommandLog events={events} />
             </div>
@@ -331,6 +329,9 @@ function DockerSummary({ info }: { info: DockerInfoSnapshot | null }) {
       {info?.operatingSystem && (
         <SummaryCell label="os" value={info.operatingSystem} />
       )}
+      {info?.ok && typeof info.pingMs === "number" && (
+        <SummaryCell label="latency" value={fmtMs(info.pingMs)} />
+      )}
       {!info?.ok && info?.error && (
         <span className="text-rose-300/80 text-xs font-mono ml-auto truncate">
           {info.error}
@@ -359,6 +360,10 @@ function fmtMemPair(used: number, total: number) {
   const u = (used / 1024 ** 3).toFixed(1);
   const t = (total / 1024 ** 3).toFixed(0);
   return `${u}/${t} GiB`;
+}
+function fmtMs(ms: number): string {
+  if (ms < 1000) return `${Math.round(ms)}ms`;
+  return `${(ms / 1000).toFixed(2)}s`;
 }
 function fmtRate(bytesPerSec: number) {
   if (bytesPerSec < 1024) return `${bytesPerSec.toFixed(0)} B/s`;

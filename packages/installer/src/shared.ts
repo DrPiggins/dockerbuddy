@@ -116,6 +116,8 @@ export interface DockerInfoSnapshot {
   ncpu?: number;
   memTotal?: number;
   kernelVersion?: string;
+  // Round-trip of the `docker info` poll — engine latency for this connection.
+  pingMs?: number;
 }
 
 export interface HostMetrics {

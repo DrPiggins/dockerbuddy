@@ -197,7 +197,9 @@ async function pollDockerInfo() {
   // `docker --context <ssh-ctx> info` shells out over SSH and will hang
   // indefinitely if the remote host is asleep or auth stalls. Cap the call so
   // a dead remote can't accumulate zombie docker/ssh processes every 5s.
+  const started = Date.now();
   const r = await run(docker, infoArgs, { timeout: 15000 });
+  const pingMs = Date.now() - started;
   if (!r.ok) {
     broadcast("docker:info", {
       ok: false,
@@ -219,6 +221,7 @@ async function pollDockerInfo() {
       ncpu: j.NCPU,
       memTotal: j.MemTotal,
       kernelVersion: j.KernelVersion,
+      pingMs,
     });
     // `docker stats` only emits when containers exist; when the last one is
     // removed the stream goes silent and the renderer keeps a stale snapshot.
