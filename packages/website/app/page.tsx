@@ -169,6 +169,13 @@ function DashboardMock() {
           />
         </div>
         <div className="border-t border-border-soft bg-bg-soft px-6 py-5">
+          <div className="mb-3 flex flex-wrap items-center gap-4">
+            <span className="text-[10px] uppercase tracking-wider text-muted-soft">
+              Latency
+            </span>
+            <LatencyChip dest="Local Docker" value="34ms" local />
+            <LatencyChip dest="HomeLab" value="11.2s" />
+          </div>
           <div className="mb-3 flex items-center justify-between">
             <h4 className="text-sm font-medium text-foreground">Command flow</h4>
             <span className="text-xs text-muted-soft">live</span>
@@ -218,6 +225,26 @@ function MockTile({
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+function LatencyChip({
+  dest,
+  value,
+  local = false,
+}: {
+  dest: string;
+  value: string;
+  local?: boolean;
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      <span
+        className={`h-1.5 w-1.5 rounded-full ${local ? "bg-[#7ed18b]" : "bg-primary"}`}
+      />
+      <span className="text-xs text-muted">{dest}</span>
+      <span className="font-mono text-xs text-foreground">{value}</span>
     </div>
   );
 }

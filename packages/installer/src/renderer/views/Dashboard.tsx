@@ -11,6 +11,7 @@ import { HostMetricTile } from "../dashboard/HostMetricTile";
 import { ContainerList } from "../dashboard/ContainerList";
 import { CommandLog } from "../dashboard/CommandLog";
 import { FrequencyGraph } from "../dashboard/FrequencyGraph";
+import { LatencyStrip } from "../dashboard/LatencyStrip";
 import { Card } from "../components/Card";
 
 const MAX_EVENTS = 500;
@@ -91,7 +92,8 @@ export function Dashboard({ platform }: { platform: NodeJS.Platform }) {
           <div className="col-span-4 min-h-0">
             <ContainerList stats={stats} />
           </div>
-          <div className="col-span-8 min-h-0 flex flex-col gap-4">
+          <div className="col-span-8 min-h-0 flex flex-col gap-3">
+            <LatencyStrip events={events} />
             <div className="flex-1 min-h-0">
               <CommandLog events={events} />
             </div>
